@@ -3,6 +3,9 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const path = require("path");
 const multer = require("multer");
+const { createHandler } = require("graphql-http/lib/use/express");
+const schema = require("./graphql/schema");
+const resolvers = require("./graphql/resolvers");
 
 const fileFilter = require("./util/fileFilter");
 const { catchErr } = require("./util/errorHandler");
@@ -45,6 +48,15 @@ app.use((error, req, res, next) => {
   const data = error.data || [];
   res.status(status).json({ message: message, data: data });
 });
+
+// GraphQL
+app.use(
+  "/graphql",
+  createHandler({
+    schema: schema,
+    rootValue: resolvers,
+  })
+);
 
 const connectDB = async () => {
   try {
