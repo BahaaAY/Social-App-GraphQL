@@ -14,19 +14,22 @@ module.exports = {
     }
     if (
       validator.isEmpty(password) ||
-      validator.isLength(password, { min: 6 })
+      !validator.isLength(password, { min: 6 })
     ) {
       errors.push({ message: "Password is too short" });
     }
+    if (validator.isEmpty(name) || !validator.isLength(name, { min: 3 })) {
+      errors.push({ message: "Name is too short" });
+    }
     if (errors.length > 0) {
-      const error = new Error("Invalid input.");
+      const error = new Error("Invalid input");
       error.data = errors;
       error.code = 422;
       throw error;
     }
 
     if (await User.findOne({ email: email })) {
-      const error = new Error("User already exists!");
+      const error = new Error("User already exists");
       throw error;
     }
 
